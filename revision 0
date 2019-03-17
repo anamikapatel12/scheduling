@@ -1,0 +1,113 @@
+
+
+#include<conio.h>
+#include<stdio.h>
+
+    int n, arrival_time[20], burst_time[20], time_quantum = 1, ready_priority = 2, execution_priority = 1;
+    int rem_burst[20], waiting_time[20], time=0, priority[20], initial_priority = 0; //current time
+
+
+
+
+
+
+//for entering the values
+void setValue()
+{
+
+     printf("Enter Total number of process: \n");
+    scanf("%d", &n);
+
+    for(int i=0; i<n; i++)
+    {
+        printf("Enter the Arrival time for process number, %d   ", i+1);
+        scanf("%d", &arrival_time[i]);
+
+        printf("Enter the Burst time for process number,   %d   " , i+1);
+        scanf("%d", &burst_time[i]);
+
+        rem_burst[i] = burst_time[i]; //a copy of burst time to store the remaining burst time
+    }
+
+
+
+};
+
+
+
+//calculations
+
+void getValue()
+{
+        while(1) //until all process gets over
+    {
+            int value = 1;
+
+    for(int i=0; i<n; i++)
+    {
+        if(rem_burst[i] > 0) //process needs execution
+        {
+
+
+            value = 0;
+
+            if(rem_burst[i] > time_quantum)
+            {
+
+                time = time + time_quantum; //shows the time for which it was being processed
+
+                rem_burst[i] = rem_burst[i] - time_quantum;//show the time it need for further execution
+
+
+            }
+
+
+        else   //it is its last cycle for execution
+        {
+            time = time + rem_burst[i];
+            waiting_time[i] = time - burst_time[i];
+            rem_burst[i] = 0;
+
+           // printf("Waiting time for process number %d", i);
+            //printf(waiting_time[i]);
+
+        }
+
+    }
+
+
+
+
+}
+        if(value == 1) //all of process are completed
+            {
+                break;
+            }
+
+    }
+
+showValue();
+
+}
+
+
+void showValue()
+{
+
+    printf("\n\n====================================================================================================================\n\n");
+     printf("Process\t\t||\t\tBurst time\t\t||\t\tArrival time\t\t||\t\tWaiting time\n\n");
+    for(int i=0; i<n; i++)
+    {
+        printf("P%d\t\t||\t\t%d\t\t\t||\t\t%d\t\t\t||\t\t%d\n", i,burst_time[i],arrival_time[i],waiting_time[i]);
+    }
+}
+
+
+void main()
+{
+    //int count,
+    setValue();
+
+    getValue();
+
+}
