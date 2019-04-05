@@ -1,0 +1,196 @@
+#include<conio.h>
+#include<stdio.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<pthread.h>
+
+void *maxPriority();
+void *arrival_sort();
+void avg_waiting_time(int wait, int n)
+{
+	    for (int i=0; i<n; i++)
+    {
+        total_waiting_time = total_waiting_time + waiting_time[i];
+        total_turn_around_time = total_turn_around_time + turn_around_time[i];
+       
+    }
+ 
+    cout << "Average waiting time = "
+         << (float)total_waiting_time / (float)n;
+    cout << "\nAverage turn around time = "
+         << (float)total_turn_around_time / (float)n;
+}
+}
+
+
+
+    struct schedule
+    {
+        int  arrival_time, burst_time;
+        int rem_burst, waiting_time,  priority; //current time
+    }pro[20];
+
+
+    int n,time = 0, time_quantum = 1, ready_priority = 2, execution_priority = 1, initial_priority = 0;
+	float avg_time;
+
+    void *maxPriority()
+    {
+
+        int max ;
+
+        max = pro[0].priority;
+        for(int i=1; i<n;i++)
+        {
+            if(pro[i].priority > max )
+            {
+                max = pro[i].priority ;
+            }
+        }
+
+    }
+
+
+    void *arrival_sort()
+    {
+        struct schedule temp;
+
+        for(int i=0;i<n;i++)
+        {
+            for(int j=i+1; j<n; j++)
+            {
+                if(pro[i].arrival_time > pro[j].arrival_time)
+                {
+                    temp = pro[i];
+                    pro[i] = pro[j];
+                    pro[j] = temp;
+                }
+            }
+        }
+    }
+
+    
+    //to sort according to the priority
+    bool scheduling(Process a, Process b)
+{
+    return !(a.priority > b.priority);
+}
+
+   void setValue()
+{
+
+    printf("Enter Total number of process: \n");
+    scanf("%d", &n);
+
+    for(int i=0; i<n; i++)
+    {
+        printf("Enter the Arrival time for process number, %d   ", i+1);
+        scanf("%d", &pro[i].arrival_time);
+
+        printf("Enter the Burst time for process number,   %d   " , i+1);
+        scanf("%d", &pro[i].burst_time);
+        pro[i].priority = initial_priority;
+        pro[i].rem_burst = pro[i].burst_time; //a copy of burst time to store the remaining burst time
+    }
+
+    arrival_sort();
+};
+
+
+
+
+//for entering the values
+
+
+
+
+
+
+//calculations
+
+void getValue()
+{
+        while(1) //until all process gets over
+    {
+            int value = 1;
+
+    for(int i=0; i<n; i++)
+    {
+        if(pro[i].rem_burst > 0) //process needs execution
+        {
+
+
+            value = 0;
+
+            if(pro[i].rem_burst > time_quantum)
+            {
+
+                time = time + time_quantum; //shows the time for which it was being processed
+
+                pro[i].rem_burst = pro[i].rem_burst - time_quantum;//show the time it need for further execution
+
+
+            }
+
+
+        else   //it is its last cycle for execution
+        {
+            time = time + pro[i].rem_burst;
+            pro[i].waiting_time = time - pro[i].burst_time;
+            pro[i].rem_burst = 0;
+
+
+        }
+
+    }
+
+
+
+
+}
+        if(value == 1) //all of process are completed
+            {
+                break;
+            }
+
+    }
+
+showValue();
+
+}
+
+
+
+void showValue()
+{
+
+    printf("\n\n====================================================================================================================\n\n");
+     printf("Process\t\t||\t\tBurst time\t\t||\t\tArrival time\t\t||\t\tWaiting time\n\n");
+    for(int i=0; i<n; i++)
+    {
+        printf("P%d\t\t||\t\t%d\t\t\t||\t\t%d\t\t\t||\t\t%d\n", i,pro[i].burst_time,pro[i].arrival_time,pro[i].waiting_time);
+        
+    }
+    //avg_waiting_time(waiting_time, n);
+/*    
+   float	avg_time =(float)( prowaiting_time / n);
+	printf("\nAverage waiting time for the process is: \n %f", avg_time);
+ */   
+}
+
+
+void main()
+{
+    //int count;
+    
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, maxPriority, NULL);
+    pthread_create(&thread2, NULL, arrival_sort, NULL);
+  
+  	pthread_join(thread1, NULL);
+  	pthread_join(thread2, NULL);
+    setValue();
+
+    getValue();
+
+}
